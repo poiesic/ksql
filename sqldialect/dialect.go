@@ -18,6 +18,7 @@ var SupportedDialects = map[string]Provider{
 	"sqlite3":   &Sqlite3Dialect{},
 	"mysql":     &MysqlDialect{},
 	"sqlserver": &SqlserverDialect{},
+	"duckdb":    &DuckDbDialect{},
 }
 
 // Provider or dialect.Provider represents one particular
@@ -101,4 +102,22 @@ func (SqlserverDialect) Escape(str string) string {
 
 func (SqlserverDialect) Placeholder(idx int) string {
 	return "@p" + strconv.Itoa(idx+1)
+}
+
+type DuckDbDialect struct{}
+
+func (DuckDbDialect) DriverName() string {
+	return "sqlite3"
+}
+
+func (DuckDbDialect) InsertMethod() InsertMethod {
+	return InsertWithLastInsertID
+}
+
+func (DuckDbDialect) Escape(str string) string {
+	return "`" + str + "`"
+}
+
+func (DuckDbDialect) Placeholder(idx int) string {
+	return "?"
 }
